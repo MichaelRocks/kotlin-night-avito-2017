@@ -4,13 +4,14 @@
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-		<title>reveal.js</title>
+		<title>Kotlin Night @ Avito</title>
 
 		<link rel="stylesheet" href="css/reveal.css">
-		<link rel="stylesheet" href="css/theme/black.css">
+		<link rel="stylesheet" href="css/presentation.css">
+		<link rel="stylesheet" href="css/theme/kotlin.css">
 
 		<!-- Theme used for syntax highlighting of code -->
-		<link rel="stylesheet" href="lib/css/zenburn.css">
+		<link rel="stylesheet" href="lib/css/solarized-light.css">
 
 		<!-- Printing and PDF exports -->
 		<script>
@@ -24,8 +25,657 @@
 	<body>
 		<div class="reveal">
 			<div class="slides">
-				<section>Slide 1</section>
-				<section>Slide 2</section>
+				<!-- Agenda -->
+				<!--
+					В этом докладе Михаил расскажет про подходы к сокращению количества boilerplate-кода при помощи таких средств языка Kotlin, как интерфейсы с частичной реализацией и делегаты классов. Продемонстрирует, как при помощи данных средств можно сымитировать traits, существовавшие в ранних альфа-версиях языка, а также покажет, какие изменения в языке могли бы существенно улучшить текущую ситуацию.
+				-->
+				<section class="centered">
+					<div class="title-container">
+						<h2 class="title-container-title">Forgotten traits</h2>
+						<div class="title-container-subtitle">Михаил Розумянский</div>
+					</div>
+				</section>
+				<section>
+					<h2>Примесь (mixin)</h2>
+					<img src="images/mixin.svg" />
+				</section>
+				<section>
+					<h2>Trait</h2>
+					<ul>
+						<li>Отсутствие состояния</li>
+						<li>Ограничение базового класса</li>
+						<li>Переопределение методов базового класса</li>
+						<li>Вызов методов базового класса</li>
+						<li>Модификаторы доступа</li>
+					</ul>
+				</section>
+				<section>
+					<h2>Объявление</h2>
+					<pre><code class="hljs kotlin">
+  trait CollectionWithComparator&lt;E : Comparable&lt;E&gt;&gt; :
+      AbstractCollection&lt;E&gt; {
+
+    protected val comparator: Comparator&lt;E&gt;
+  
+    override fun contains(element: E): Boolean {
+      return any { comparator.compare(it, element) == 0 }
+    }
+  }
+					</code></pre>
+				</section>
+				<section>
+					<h2>Использование</h2>
+					<pre><code class="hljs kotlin">
+  class CaseInsensitiveStringCollection :
+      AbstractCollection&lt;String&gt;(),
+      CollectionWithComparator&lt;String&gt; {
+
+    override val comparator = String.CASE_INSENSITIVE_ORDER
+  
+    // ...
+  }
+					</code></pre>
+				</section>
+				<section class="centered">
+					<h1>Чем заменить?</h1>
+				</section>
+				<section class="centered">
+					<h1>Ничем</h1>
+				</section>
+				<section class="centered">
+					<h1>А на самом деле?</h1>
+				</section>
+				<section>
+					<h2>Задача</h2>
+					<img src="images/classes.svg" />
+				</section>
+				<section>
+					<h2>Делегат</h2>
+					<img src="images/delegate.svg" />
+				</section>
+				<section>
+					<img src="images/punch.webp" width="480" height="456" />
+				</section>
+				<section>
+					<h2>Сотрудник</h2>
+					<pre><code class="hljs kotlin">
+  interface Employee {
+    fun performTask(task: String)
+  }
+					</code></pre>
+					<pre><code class="hljs kotlin">
+  abstract class AbstractEmployee(val name: String) : Employee {
+    fun say(text: String, vararg arguments: String) {
+      Output.write(name, text, *arguments)
+    }
+  }
+					</code></pre>
+				</section>
+				<section class="centered">
+					<h1>Java way</h1>
+				</section>
+				<section>
+					<h2>Worker</h2>
+					<pre><code class="hljs java">
+  public class Worker extends AbstractEmployee {
+    public Worker(final String name) {
+      super(name);
+    }
+  
+    @Override
+    public void performTask(final String task) {
+      say("I had to %s and I've just done it.", task);
+    }
+  }
+					</code></pre>
+				</section>
+				<section>
+					<h2>Manager</h2>
+					<pre style="font-size: 16px"><code class="hljs java">
+  public class Manager extends AbstractEmployee {
+    private final Employee delegate = new Worker("Dilbert");
+
+    public Manager(final String name) { super(name); }
+
+    @Override
+    public void performTask(@NotNull final String task) {
+      delegate.performTask(task);
+    }
+
+    public void manageTask(@NotNull final String task) {
+      say("Hey, %s.", task);
+      performTask(task);
+      say("It's just a piece of cake to %s.", task);
+    }
+  }
+					</code></pre>
+				</section>
+				<section>
+					<h2>Main</h2>
+					<pre><code class="hljs java">
+  public class Demo {
+    public static void main(final String[] args) {
+      final Manager manager = new Manager("Boss");
+      for (final String task : args) {
+        manager.performTask(task);
+      }
+    }
+  }
+					</code></pre>
+				</section>
+				<section class="centered">
+					<div class="chat">
+						<div class="chat-bubble left">
+							<p class="name">Boss</p>
+							<p class="message">Hey, prepare a presentation.</p>
+						</div>
+						<div class="chat-bubble right">
+							<p class="name">Dilbert</p>
+							<p class="message">I had to prepare a presentation and I've just done it.</p>
+						</div>
+						<div class="chat-bubble left">
+							<p class="name">Boss</p>
+							<p class="message">It's just a piece of cake to prepare a presentation.</p>
+						</div>
+					</div>
+				</section>
+				<section class="centered">
+					<h1>Kotlin way</h1>
+				</section>
+				<section>
+					<h2>Worker</h2>
+					<pre><code class="hljs kotlin">
+  class Worker(name: String) : AbstractEmployee(name) {
+    override fun performTask(task: String) {
+      say("I had to $task and I've just done it.")
+    }
+  }
+					</code></pre>
+				</section>
+				<section>
+					<h2>Manager</h2>
+					<pre><code class="hljs kotlin">
+  class Manager(
+      name: String
+  ) : AbstractEmployee(name),
+      Employee by Worker("Dilbert") {
+    fun manageTask(task: String) {
+      say("Hey, $task.")
+      performTask(task)
+      say("It's just a piece of cake to $task.")
+    }
+  }
+					</code></pre>
+				</section>
+				<section>
+					<h2>Что внутри?</h2>
+					<pre style="font-size: 16px"><code class="hljs java">
+  public final class Manager extends AbstractEmployee {
+    private final Worker $$delegate_0 = new Worker("Dilbert");
+
+    public Manager(@NotNull String name) { super(name); }
+
+    public void performTask(@NotNull String task) {
+      $$delegate_0.performTask(task);
+    }
+
+    public final void manageTask(@NotNull String task) {
+      say("Hey, " + task + '.');
+      performTask(task);
+      say("It's just a piece of cake to " + task + '.');
+    }
+  }
+					</code></pre>
+				</section>
+				<section class="centered">
+					<h1>Доступ к делегату</h1>
+				</section>
+				<section>
+					<h2>Новый Manager</h2>
+					<pre><code class="hljs kotlin">
+  class Manager private constructor(
+      name: String,
+      private val delegate: Employee
+  ) : AbstractEmployee(name), Employee by delegate {
+    constructor(name: String) : this(name, Worker("Dilbert"))
+  
+    override fun performTask(task: String) {
+      say("Hey, $task.")
+      delegate.performTask(task)
+      say("It's just a piece of cake to $task.")
+    }
+  }
+					</code></pre>
+				</section>
+				<section>
+					<h2>Могло бы быть и лучше</h2>
+					<br />
+					<ul>
+						<li>
+							<a href="https://youtrack.jetbrains.com/issue/KT-83">KT-83</a>
+							— Distinguish syntactically when delegating to a property
+						</li>
+						<br />
+						<li>
+							<a href="https://youtrack.jetbrains.com/issue/KT-18427">KT-18427</a>
+							— Provide a way to reference a delegate in class body
+						</li>
+					</ul>
+				</section>
+				<section>
+					<h2>Изменение делегата</h2>
+					<img src="images/mutable-delegate.svg" />
+				</section>
+				<section>
+					<h2>Наивный подход</h2>
+					<pre style="font-size: 16px"><code class="hljs kotlin">
+  class Manager private constructor(
+      name: String,
+      private var delegate: Employee
+  ) : AbstractEmployee(name), Employee by delegate {
+    constructor(name: String) : this(name, Worker(Names.next()))
+  
+    fun manageTask(task: String) {
+      say("Hey, $task.")
+      performTask(task)
+      say("It's just a piece of cake to $task.")
+      fireAndHire()
+    }
+
+    private fun fireAndHire() {
+      say("Seems I need to fire this guy and hire someone else.")
+      delegate = Worker(Names.next())
+    }
+  }
+					</code></pre>
+				</section>
+				<section class="centered">
+					<div style="font-size: 30px">
+						<div class="chat">
+							<div class="chat-bubble left">
+								<p class="name">Boss</p>
+								<p class="message">Hey, prepare a presentation.</p>
+							</div>
+							<div class="chat-bubble right">
+								<p class="name">Dilbert</p>
+								<p class="message">I had to prepare a presentation and I've just done it.</p>
+							</div>
+							<div class="chat-bubble left">
+								<p class="name">Boss</p>
+								<p class="message">It's just a piece of cake to prepare a presentation.</p>
+								<p class="message">Seems I need to fire this guy and hire someone else.</p>
+								<p class="message">Hey, write a speech.</p>
+							</div>
+							<div class="chat-bubble right">
+								<p class="name"><span class="error">Dilbert</span></p>
+								<p class="message">I had to write a speech and I've just done it.</p>
+							</div>
+							<div class="chat-bubble left">
+								<p class="name">Boss</p>
+								<p class="message">It's just a piece of cake to write a speech.</p>
+								<p class="message">Seems I need to fire this guy and hire someone else.</p>
+							</div>
+						</div>
+					</div>
+				</section>
+				<section class="centered">
+					<h1>Но почему?</h1>
+				</section>
+				<section>
+					<h2>Декомпилируем</h2>
+					<pre style="font-size: 13px"><code class="hljs kotlin">
+  public final class Manager extends AbstractEmployee {
+    private Employee delegate;
+    private final Employee $$delegate_0;
+ 
+    private Manager(String name, Employee delegate) {
+      super(name);
+      $$delegate_0 = delegate;
+      delegate = delegate;
+    }
+ 
+    public Manager(@NotNull String name) {
+      this(name, new Worker(Names.INSTANCE.next());
+    }
+ 
+    public void performTask(@NotNull String task) {
+      $$delegate_0.performTask(task);
+    }
+
+    private final void fireAndHire() {
+      say("Seems I need to fire this guy and hire someone else.");
+      delegate = new Worker(Names.INSTANCE.next());
+    }
+  }						
+					</code></pre>
+				</section>
+				<section>
+					<h2>Оказывается</h2>
+					<br />
+					<p>Для делегата всегда создаётся поле</p>
+					<ul>
+						<li>
+							<a href="https://youtrack.jetbrains.com/issue/KT-5870">KT-5870</a>
+							— Delegation to var field
+						</li>
+					</ul>
+				</section>
+				<section class="centered">
+					<h1>И что же делать?</h1>
+				</section>
+				<section>
+					<h2>Очередной Manager</h2>
+					<pre style="font-size: 20px"><code class="hljs kotlin">
+  class Manager(name: String) : AbstractEmployee(name) {
+    private var delegate = Worker(Names.next())
+  
+    override fun performTask(task: String) {
+      say("Hey, $task.")
+      delegate.performTask(task)
+      say("It's just a piece of cake to $task.")
+      fireAndHire()
+    }
+  
+    private fun fireAndHire() {
+      say("Seems I need to fire this guy and hire someone else.")
+      delegate = Worker(Names.next())
+    }
+  }					</code></pre>
+				</section>
+				<section>
+					<h2>Прямо как в Java 😢</h2>
+					<pre style="font-size: 18px"><code class="hljs java">
+  public class Manager extends AbstractEmployee {
+    private final Employee delegate = new Worker(Names.INSTANCE.next());
+
+    public Manager(final String name) { super(name); }
+  
+    @Override public void performTask(task: String) {
+      say("Hey, %s.", task);
+      delegate.performTask(task);
+      say("It's just a piece of cake to %s.", task);
+      fireAndHire();
+    }
+  
+    private void fireAndHire() {
+      say("Seems I need to fire this guy and hire someone else.");
+      delegate = Worker(Names.INSTANCE.next());
+    }
+  }					</code></pre>
+				</section>
+				<section>
+					<h3>Интерфейсы с частичной реализацией</h3>
+					<pre><code class="hljs kotlin">
+  interface DelegatingEmployee : Employee {
+    val delegate: Employee
+  
+    override fun performTask(task: String) {
+      delegate.performTask(task)
+    }
+  }
+					</code></pre>
+				</section>
+				<section>
+					<h2>Как работают?</h2>
+					<pre><code class="hljs java">
+  public interface DelegatingEmployee extends Employee {
+    @NotNull Employee getDelegate();
+
+    void performTask(@NotNull String var1);
+
+    final class DefaultImpls {
+      public static void performTask(
+          @NotNull DelegatingEmployee self, String task) {
+        self.getDelegate().performTask(task);
+      }
+    }
+  }
+					</code></pre>
+				</section>
+				<section>
+					<h2>Вторая попытка</h2>
+					<pre style="font-size: 18px"><code class="hljs kotlin">
+  class Manager(
+      name: String
+  ) : AbstractEmployee(name), DelegatingEmployee {
+    override var delegate: Employee = Worker(Names.next())
+  
+    override fun performTask(task: String) {
+      say("Hey, $task.")
+      super.performTask(task)
+      say("It's just a piece of cake to $task.")
+      fireAndHire()
+    }
+  
+    private fun fireAndHire() {
+      say("Seems I need to fire this guy and hire someone else.")
+      delegate = Worker(Names.next())
+    }
+  }					</code></pre>
+				</section>
+				<section class="centered">
+					<div style="font-size: 30px">
+						<div class="chat">
+							<div class="chat-bubble left">
+								<p class="name">Boss</p>
+								<p class="message">Hey, prepare a presentation.</p>
+							</div>
+							<div class="chat-bubble right">
+								<p class="name">Dilbert</p>
+								<p class="message">I had to prepare a presentation and I've just done it.</p>
+							</div>
+							<div class="chat-bubble left">
+								<p class="name">Boss</p>
+								<p class="message">It's just a piece of cake to prepare a presentation.</p>
+								<p class="message">Seems I need to fire this guy and hire someone else.</p>
+								<p class="message">Hey, write a speech.</p>
+							</div>
+							<div class="chat-bubble right alt">
+								<p class="name">Wally</p>
+								<p class="message">I had to write a speech and I've just done it.</p>
+							</div>
+							<div class="chat-bubble left">
+								<p class="name">Boss</p>
+								<p class="message">It's just a piece of cake to write a speech.</p>
+								<p class="message">Seems I need to fire this guy and hire someone else.</p>
+							</div>
+						</div>
+					</div>
+				</section>
+				<section>
+					<h2>Прямо как в Java 8 😢</h2>
+					<pre style="font-size: 15px"><code class="hljs java">
+  public class Manager extends AbstractEmployee, DelegatingEmployee {
+    private final String name;
+    private Employee delegate = new Worker(Names.INSTANCE.next());
+
+    public Manager(final String name) { super(name); }
+
+    @Override public Employee getDeleagate() { return delegate; }
+
+    @Override public void performTask(final String task) {
+      say("Hey, %s.", task);
+      super.performTask(task);
+      say("It's just a piece of cake to %s.", task);
+      fireAndHire();
+    }
+  
+    private void fireAndHire() {
+      say("Seems I need to fire this guy and hire someone else.");
+      delegate = Worker(Names.INSTANCE.next());
+    }
+  }
+					</code></pre>
+				</section>
+				<section>
+					<h2>Только немного хуже 😭</h2>
+					<br />
+					<ul>
+						<li>
+							<a href="https://youtrack.jetbrains.com/issue/KT-4779">KT-4779</a>
+							— Generate default methods for implementations in interfaces
+						</li>
+						<br />
+						<li>
+							<a href="https://youtrack.jetbrains.com/issue/KT-19415">KT-19415</a>
+							— Introduce JvmDefault annotation
+						</li>
+					</ul>
+				</section>
+				<section>
+					<h2>Делегат делегата</h2>
+					<img src="images/expert.svg" />
+				</section>
+				<section>
+					<h2>Появляется эксперт</h2>
+					<br />
+					<pre><code class="hljs kotlin">
+  interface Expert {
+    fun answer(question: String)
+  }
+					</code></pre>
+				</section>
+				<section>
+					<h2>Работник спрашивает эксперта</h2>
+					<pre style="font-size: 18px"><code class="hljs kotlin">
+  class Worker(
+      name: String,
+      private val expert: Expert
+  ) : AbstractEmployee(name) {
+    override fun performTask(task: String) {
+      ask("What is the theme?")
+      ask("When is the deadline?")
+      say("I had to $task and I've just done it.")
+    }
+  
+    private fun ask(question: String) {
+      say(question)
+      expert.answer(question)
+    }
+  }
+					</code></pre>
+				</section>
+				<section>
+					<h2>Очевидное решение</h2>
+					<pre style="font-size: 18px"><code class="hljs kotlin" data-noescape>
+  class Manager(
+      name: String
+  ) : AbstractEmployee(name),
+      Expert,
+      Employee by Worker("Dilbert", <span class="error">this</span>) {
+    override fun performTask(task: String) {
+      say("Hey, $task.")
+      super.performTask(task)
+      say("It's just a piece of cake to $task.")
+    }
+  
+    override fun answer(question: String) {
+      say(MotivationalQuotes.random())
+    }
+  }
+					</code></pre>
+				</section>
+				<section>
+					<h2>Не работает</h2>
+					<br />
+					<p>Error: 'this' is not defined in this context</p>
+					<ul>
+						<li>
+							<a href="https://youtrack.jetbrains.com/issue/KT-13603">KT-13603</a>
+							— Allow passing this to a class delegate
+						</li>
+					</ul>
+				</section>
+				<section>
+					<h2>Исправляем</h2>
+					<pre style="font-size: 18px"><code class="hljs kotlin">
+  class Manager(
+      name: String
+  ) : AbstractEmployee(name), DelegatingEmployee, Expert {
+    override val delegate: Employee = Worker("Dilbert", this)
+  
+    override fun performTask(task: String) {
+      say("Hey, $task.")
+      super.performTask(task)
+      say("It's just a piece of cake to $task.")
+    }
+  
+    override fun answer(question: String) {
+      say(MotivationalQuotes.random())
+    }
+  }
+					</code></pre>
+				</section>
+				<section class="centered">
+					<div style="font-size: 30px">
+						<div class="chat">
+							<div class="chat-bubble left">
+								<p class="name">Boss</p>
+								<p class="message">Hey, prepare a presentation.</p>
+							</div>
+							<div class="chat-bubble right">
+								<p class="name">Dilbert</p>
+								<p class="message">What is the theme?</p>
+							</div>
+							<div class="chat-bubble left">
+								<p class="name">Boss</p>
+								<p class="message">To win in the marketplace you must first win in the workplace.</p>
+							</div>
+							<div class="chat-bubble right">
+								<p class="name">Dilbert</p>
+								<p class="message">When is the deadline?</p>
+							</div>
+							<div class="chat-bubble left">
+								<p class="name">Boss</p>
+								<p class="message">If it scares you, it might be a good thing to try.</p>
+							</div>
+							<div class="chat-bubble right">
+								<p class="name">Dilbert</p>
+								<p class="message">I had to prepare a presentation and I've just done it.</p>
+							</div>
+							<div class="chat-bubble left">
+								<p class="name">Boss</p>
+								<p class="message">It's just a piece of cake to prepare a presentation.</p>
+							</div>
+						</div>
+					</div>
+				</section>
+				<section>
+					<h2>Опять как в Java 8 😢</h2>
+					<pre style="font-size: 16px"><code class="hljs java">
+  public class Manager extends AbstractEmployee implements DelegatingEmployee, Expert {
+    private final String name;
+    private final Employee delegate = new Worker("Dilbert", this);
+  
+    public Manager(final String name) { super(name); }
+
+    @Override public Employee getDelegate() { return delegate; } 
+  
+    @Override public void performTask(final String task) {
+      say("Hey, %s.", task);
+      super.performTask(task);
+      say("It's just a piece of cake to %s.", task);
+    }
+  
+    @Override public void answer(final String question) {
+      say(MotivationalQuotes.INSTANCE.random());
+    }
+  }
+					</code></pre>
+				</section>
+				<section>
+					<h2>В результате</h2>
+					<ul>
+						<li>Наличие <s class="light-text">Отсутствие</s> состояния</li>
+						<li>Ограничение <s class="light-text">базового класса</s> использования</li>
+						<li><s class="light-text">Переопределение методов базового класса</s></li>
+						<li>Вызов методов <s class="light-text">базового класса</s> контейнера</li>
+						<li>Модификаторы доступа</li>
+					</ul>
+				</section>
+				<section class="centered">
+					<h1>Спасибо за внимание!</h1>
+				</section>
 			</div>
 		</div>
 
@@ -37,6 +687,16 @@
 			// - https://github.com/hakimel/reveal.js#configuration
 			// - https://github.com/hakimel/reveal.js#dependencies
 			Reveal.initialize({
+				width: 960,
+				height: 540,
+				controls: true,
+				progress: true,
+				history: true,
+				center: false,
+				slideNumber: 'h/v',
+				backgroundTransition: 'zoom',
+				pdfMaxPagesPerSlide: 1,
+
 				dependencies: [
 					{ src: 'plugin/markdown/marked.js' },
 					{ src: 'plugin/markdown/markdown.js' },
