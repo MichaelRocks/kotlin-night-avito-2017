@@ -81,5 +81,25 @@
 
   .light-text {
     opacity: 0.5;
+    font-size: 75%;
+  }
+
+  code.highlight-code {
+    .unimportant {
+      opacity: 0.5;
+    }
+
+    .fragment {
+      opacity: 0.5;
+      visibility: inherit;
+
+      &.visible {
+        opacity: 1.0;
+      }
+
+      &.current-fragment {
+        font-weight: 600;
+      }
+    }
   }
 }

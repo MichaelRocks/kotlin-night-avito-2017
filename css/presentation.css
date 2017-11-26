@@ -62,4 +62,16 @@
   box-shadow: none; }
 
 .reveal .slides section .light-text {
+  opacity: 0.5;
+  font-size: 75%; }
+
+.reveal .slides section code.highlight-code .unimportant {
   opacity: 0.5; }
+
+.reveal .slides section code.highlight-code .fragment {
+  opacity: 0.5;
+  visibility: inherit; }
+  .reveal .slides section code.highlight-code .fragment.visible {
+    opacity: 1.0; }
+  .reveal .slides section code.highlight-code .fragment.current-fragment {
+    font-weight: 600; }

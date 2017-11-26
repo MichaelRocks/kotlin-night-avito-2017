@@ -51,29 +51,29 @@
 				</section>
 				<section>
 					<h2>Объявление</h2>
-					<pre><code class="hljs kotlin">
-  trait CollectionWithComparator&lt;E : Comparable&lt;E&gt;&gt; :
-      AbstractCollection&lt;E&gt; {
+					<pre><code class="hljs kotlin highlight-code" data-noescape>
+  <span class="fragment" data-fragment-index="0">trait</span> <span class="fragment" data-fragment-index="1">CollectionWithComparator&lt;E : Comparable&lt;E&gt;&gt; :</span>
+      <span class="fragment" data-fragment-index="2">AbstractCollection&lt;E&gt;</span> <span class="fragment" data-fragment-index="0">{</span>
 
-    protected val comparator: Comparator&lt;E&gt;
-  
+    <span class="fragment" data-fragment-index="3">protected val comparator: Comparator&lt;E&gt;</span>
+  	<span class="fragment" data-fragment-index="4">
     override fun contains(element: E): Boolean {
       return any { comparator.compare(it, element) == 0 }
-    }
-  }
+    }</span>
+  <span class="fragment" data-fragment-index="0">}</span>
 					</code></pre>
 				</section>
 				<section>
 					<h2>Использование</h2>
-					<pre><code class="hljs kotlin">
-  class CaseInsensitiveStringCollection :
-      AbstractCollection&lt;String&gt;(),
-      CollectionWithComparator&lt;String&gt; {
+					<pre><code class="hljs kotlin highlight-code" data-noescape>
+  <span class="fragment" data-fragment-index="0">class CaseInsensitiveStringCollection :
+      AbstractCollection&lt;String&gt;(),</span>
+      <span class="fragment" data-fragment-index="1">CollectionWithComparator&lt;String&gt;</span> <span class="fragment" data-fragment-index="0">{</span>
 
-    override val comparator = String.CASE_INSENSITIVE_ORDER
-  
+    <span class="fragment" data-fragment-index="2">override val comparator = String.CASE_INSENSITIVE_ORDER</span>
+  	<span class="fragment" data-fragment-index="0">
     // ...
-  }
+  }</span>
 					</code></pre>
 				</section>
 				<section class="centered">
@@ -98,17 +98,17 @@
 				</section>
 				<section>
 					<h2>Сотрудник</h2>
-					<pre><code class="hljs kotlin">
-  interface Employee {
-    fun performTask(task: String)
-  }
+					<pre><code class="hljs kotlin highlight-code" data-noescape>
+  <span class="fragment" data-fragment-index="0">interface Employee {</span>
+    <span class="fragment" data-fragment-index="1">fun performTask(task: String)</span>
+  <span class="fragment" data-fragment-index="0">}</span>
 					</code></pre>
-					<pre><code class="hljs kotlin">
-  abstract class AbstractEmployee(val name: String) : Employee {
-    fun say(text: String, vararg arguments: String) {
-      Output.write(name, text, *arguments)
-    }
-  }
+					<pre><code class="hljs kotlin highlight-code" data-noescape>
+  <span class="fragment" data-fragment-index="2">abstract class AbstractEmployee(</span><span class="fragment" data-fragment-index="4">val name: String</span><span class="fragment" data-fragment-index="2">)</span><span class="fragment" data-fragment-index="3"> : Employee</span> <span class="fragment" data-fragment-index="2">{</span>
+    <span class="fragment" data-fragment-index="5">fun say(text: String, vararg arguments: String) {</span>
+      <span class="fragment" data-fragment-index="6">Output.write(name, text, *arguments)</span>
+    <span class="fragment" data-fragment-index="5">}</span>
+  <span class="fragment" data-fragment-index="2">}</span>
 					</code></pre>
 				</section>
 				<section class="centered">
@@ -116,38 +116,38 @@
 				</section>
 				<section>
 					<h2>Worker</h2>
-					<pre><code class="hljs java">
-  public class Worker extends AbstractEmployee {
-    public Worker(final String name) {
+					<pre><code class="hljs java highlight-code" data-noescape>
+  <span class="fragment" data-fragment-index="0">public class Worker extends AbstractEmployee {</span>
+    <span class="fragment" data-fragment-index="1">public Worker(final String name) {
       super(name);
-    }
-  
+    }</span>
+  	<span class="fragment" data-fragment-index="2">
     @Override
     public void performTask(final String task) {
       say("I had to %s and I've just done it.", task);
-    }
-  }
+    }</span>
+  <span class="fragment" data-fragment-index="0">}</span>
 					</code></pre>
 				</section>
 				<section>
 					<h2>Manager</h2>
-					<pre style="font-size: 16px"><code class="hljs java">
-  public class Manager extends AbstractEmployee {
-    private final Employee delegate = new Worker("Dilbert");
+					<pre style="font-size: 16px"><code class="hljs java highlight-code" data-noescape>
+  <span class="fragment" data-fragment-index="0">public class Manager extends AbstractEmployee {</span>
+    <span class="fragment" data-fragment-index="2">private final Employee delegate = new Worker("Dilbert");</span>
 
-    public Manager(final String name) { super(name); }
-
+    <span class="fragment" data-fragment-index="1">public Manager(final String name) { super(name); }</span>
+	<span class="fragment" data-fragment-index="3">
     @Override
     public void performTask(@NotNull final String task) {
       delegate.performTask(task);
-    }
-
+    }</span>
+	<span class="fragment" data-fragment-index="4">
     public void manageTask(@NotNull final String task) {
-      say("Hey, %s.", task);
-      performTask(task);
+      say("Hey, %s.", task);</span>
+      <span class="fragment" data-fragment-index="5">performTask(task);</span><span class="fragment" data-fragment-index="4">
       say("It's just a piece of cake to %s.", task);
-    }
-  }
+    }</span>
+  <span class="fragment" data-fragment-index="0">}</span>
 					</code></pre>
 				</section>
 				<section>
@@ -157,7 +157,7 @@
     public static void main(final String[] args) {
       final Manager manager = new Manager("Boss");
       for (final String task : args) {
-        manager.performTask(task);
+        manager.manageTask(task);
       }
     }
   }
@@ -184,47 +184,47 @@
 				</section>
 				<section>
 					<h2>Worker</h2>
-					<pre><code class="hljs kotlin">
-  class Worker(name: String) : AbstractEmployee(name) {
-    override fun performTask(task: String) {
+					<pre><code class="hljs kotlin highlight-code" data-noescape>
+  <span class="fragment" data-fragment-index="0">class Worker(name: String) : AbstractEmployee(name) {</span>
+    <span class="fragment" data-fragment-index="1">override fun performTask(task: String) {
       say("I had to $task and I've just done it.")
-    }
-  }
+    }</span>
+  <span class="fragment" data-fragment-index="0">}</span>
 					</code></pre>
 				</section>
 				<section>
 					<h2>Manager</h2>
-					<pre><code class="hljs kotlin">
-  class Manager(
+					<pre><code class="hljs kotlin highlight-code" data-noescape>
+  <span class="fragment" data-fragment-index="0">class Manager(
       name: String
-  ) : AbstractEmployee(name),
-      Employee by Worker("Dilbert") {
-    fun manageTask(task: String) {
-      say("Hey, $task.")
-      performTask(task)
+  ) : AbstractEmployee(name),</span>
+      <span class="fragment" data-fragment-index="1">Employee by Worker("Dilbert")</span> <span class="fragment" data-fragment-index="0">{</span>
+    <span class="fragment" data-fragment-index="2">fun manageTask(task: String) {
+      say("Hey, $task.")</span>
+      <span class="fragment" data-fragment-index="3">performTask(task)</span><span class="fragment" data-fragment-index="2">
       say("It's just a piece of cake to $task.")
-    }
-  }
+    }</span>
+  <span class="fragment" data-fragment-index="0">}</span>
 					</code></pre>
 				</section>
 				<section>
 					<h2>Что внутри?</h2>
-					<pre style="font-size: 16px"><code class="hljs java">
-  public final class Manager extends AbstractEmployee {
-    private final Worker $$delegate_0 = new Worker("Dilbert");
+					<pre style="font-size: 16px"><code class="hljs java highlight-code" data-noescape>
+  <span class="fragment" data-fragment-index="0">public final class Manager extends AbstractEmployee {</span>
+    <span class="fragment" data-fragment-index="1">private final Worker $$delegate_0 = new Worker("Dilbert");</span>
 
-    public Manager(@NotNull String name) { super(name); }
-
-    public void performTask(@NotNull String task) {
-      $$delegate_0.performTask(task);
-    }
-
+    <span class="fragment" data-fragment-index="0">public Manager(@NotNull String name) { super(name); }</span>
+    <span class="fragment" data-fragment-index="2">
+    @Override public void performTask(@NotNull String task) {
+      <span class="fragment" data-fragment-index="3">$$delegate_0.performTask(task);</span>
+    }</span>
+	<span class="fragment" data-fragment-index="4">
     public final void manageTask(@NotNull String task) {
       say("Hey, " + task + '.');
       performTask(task);
       say("It's just a piece of cake to " + task + '.');
-    }
-  }
+    }</span>
+  <span class="fragment" data-fragment-index="0">}</span>
 					</code></pre>
 				</section>
 				<section class="centered">
@@ -232,19 +232,19 @@
 				</section>
 				<section>
 					<h2>Новый Manager</h2>
-					<pre><code class="hljs kotlin">
-  class Manager private constructor(
-      name: String,
-      private val delegate: Employee
-  ) : AbstractEmployee(name), Employee by delegate {
-    constructor(name: String) : this(name, Worker("Dilbert"))
-  
+					<pre><code class="hljs kotlin highlight-code" data-noescape>
+  <span class="fragment" data-fragment-index="0">class Manager</span> <span class="fragment" data-fragment-index="1">private constructor</span><span class="fragment" data-fragment-index="0">(</span>
+      <span class="fragment" data-fragment-index="0">name: String,</span>
+      <span class="fragment" data-fragment-index="1">private val delegate: Employee</span>
+  )</span> <span class="fragment" data-fragment-index="0">: AbstractEmployee(name), Employee by delegate {</span>
+    <span class="fragment" data-fragment-index="2">constructor(name: String) : this(name, Worker("Dilbert"))</span>
+  	<span class="fragment" data-fragment-index="3">
     override fun performTask(task: String) {
-      say("Hey, $task.")
-      delegate.performTask(task)
+      say("Hey, $task.")</span>
+      <span class="fragment" data-fragment-index="4">delegate.performTask(task)</span><span class="fragment" data-fragment-index="3">
       say("It's just a piece of cake to $task.")
-    }
-  }
+    }</span>
+  <span class="fragment" data-fragment-index="0">}</span>
 					</code></pre>
 				</section>
 				<section>
@@ -268,25 +268,25 @@
 				</section>
 				<section>
 					<h2>Наивный подход</h2>
-					<pre style="font-size: 16px"><code class="hljs kotlin">
-  class Manager private constructor(
-      name: String,
-      private var delegate: Employee
-  ) : AbstractEmployee(name), Employee by delegate {
+					<pre style="font-size: 16px"><code class="hljs kotlin highlight-code" data-noescape>
+  <span class="unimportant">class Manager private constructor(
+      name: String,</span>
+      <span class="fragment" data-fragment-index="0">private var delegate: Employee</span>
+  <span class="unimportant">) : AbstractEmployee(name), Employee by delegate {
     constructor(name: String) : this(name, Worker(Names.next()))
   
     fun manageTask(task: String) {
       say("Hey, $task.")
       performTask(task)
-      say("It's just a piece of cake to $task.")
-      fireAndHire()
-    }
-
+      say("It's just a piece of cake to $task.")</span>
+      <span class="fragment" data-fragment-index="1">fireAndHire()</span>
+    <span class="unimportant">}</span>
+    <span class="fragment" data-fragment-index="2">
     private fun fireAndHire() {
-      say("Seems I need to fire this guy and hire someone else.")
-      delegate = Worker(Names.next())
-    }
-  }
+      say("Seems I need to fire this guy and hire someone else.")</span>
+      <span class="fragment" data-fragment-index="3">delegate = Worker(Names.next())</span><span class="fragment" data-fragment-index="2">
+    }</span>
+  <span class="unimportant">}</span>
 					</code></pre>
 				</section>
 				<section class="centered">
@@ -323,30 +323,30 @@
 				</section>
 				<section>
 					<h2>Декомпилируем</h2>
-					<pre style="font-size: 13px"><code class="hljs kotlin">
-  public final class Manager extends AbstractEmployee {
-    private Employee delegate;
-    private final Employee $$delegate_0;
- 
+					<pre style="font-size: 13px"><code class="hljs kotlin highlight-code" data-noescape>
+  <span class="unimportant">public final class Manager extends AbstractEmployee {</span>
+    <span class="fragment" data-fragment-index="0">private Employee delegate;
+    private final Employee $$delegate_0;</span>
+ 	<span class="unimportant">
     private Manager(String name, Employee delegate) {
-      super(name);
-      $$delegate_0 = delegate;
-      delegate = delegate;
-    }
- 
+      super(name);</span>
+      <span class="fragment" data-fragment-index="1">$$delegate_0 = delegate;
+      delegate = delegate;</span>
+    <span class="unimportant">}
+
     public Manager(@NotNull String name) {
       this(name, new Worker(Names.INSTANCE.next());
     }
  
-    public void performTask(@NotNull String task) {
-      $$delegate_0.performTask(task);
-    }
+    public void performTask(@NotNull String task) {</span>
+      <span class="fragment" data-fragment-index="3">$$delegate_0.performTask(task);</span>
+    <span class="unimportant">}
 
     private final void fireAndHire() {
-      say("Seems I need to fire this guy and hire someone else.");
-      delegate = new Worker(Names.INSTANCE.next());
-    }
-  }						
+      say("Seems I need to fire this guy and hire someone else.");</span>
+      <span class="fragment" data-fragment-index="2">delegate = new Worker(Names.INSTANCE.next());</span>
+    <span class="unimportant">}
+  }</span>
 					</code></pre>
 				</section>
 				<section>
@@ -365,22 +365,22 @@
 				</section>
 				<section>
 					<h2>Очередной Manager</h2>
-					<pre style="font-size: 20px"><code class="hljs kotlin">
-  class Manager(name: String) : AbstractEmployee(name) {
-    private var delegate = Worker(Names.next())
-  
+					<pre style="font-size: 20px"><code class="hljs kotlin highlight-code" data-noescape>
+  <span class="unimportant">class Manager(name: String) : AbstractEmployee(name) {</span>
+    <span class="fragment" data-fragment-index="0">private var delegate = Worker(Names.next())</span>
+  	<span class="unimportant">
     override fun performTask(task: String) {
-      say("Hey, $task.")
-      delegate.performTask(task)
+      say("Hey, $task.")</span>
+      <span class="fragment" data-fragment-index="1">delegate.performTask(task)</span><span class="unimportant">
       say("It's just a piece of cake to $task.")
       fireAndHire()
     }
   
     private fun fireAndHire() {
-      say("Seems I need to fire this guy and hire someone else.")
-      delegate = Worker(Names.next())
-    }
-  }					</code></pre>
+      say("Seems I need to fire this guy and hire someone else.")</span>
+      <span class="fragment" data-fragment-index="2">delegate = Worker(Names.next())</span>
+    <span class="unimportant">}
+  }</span>			</code></pre>
 				</section>
 				<section>
 					<h2>Прямо как в Java 😢</h2>
@@ -405,53 +405,53 @@
 				</section>
 				<section>
 					<h3>Интерфейсы с частичной реализацией</h3>
-					<pre><code class="hljs kotlin">
-  interface DelegatingEmployee : Employee {
-    val delegate: Employee
+					<pre><code class="hljs kotlin highlight-code" data-noescape>
+  <span class="fragment" data-fragment-index="0">interface DelegatingEmployee : Employee {</span>
+    <span class="fragment" data-fragment-index="1">val delegate: Employee</span>
   
-    override fun performTask(task: String) {
-      delegate.performTask(task)
-    }
-  }
+    <span class="fragment" data-fragment-index="2">override fun performTask(task: String) {</span>
+      <span class="fragment" data-fragment-index="3">delegate.performTask(task)</span>
+    <span class="fragment" data-fragment-index="2">}</span>
+  <span class="fragment" data-fragment-index="0">}</span>
 					</code></pre>
 				</section>
 				<section>
 					<h2>Как работают?</h2>
-					<pre><code class="hljs java">
-  public interface DelegatingEmployee extends Employee {
-    @NotNull Employee getDelegate();
+					<pre><code class="hljs java highlight-code" data-noescape>
+  <span class="fragment" data-fragment-index="0">public interface DelegatingEmployee extends Employee {</span>
+    <span class="fragment" data-fragment-index="1">@NotNull Employee getDelegate();
 
-    void performTask(@NotNull String var1);
-
-    final class DefaultImpls {
-      public static void performTask(
-          @NotNull DelegatingEmployee self, String task) {
-        self.getDelegate().performTask(task);
-      }
-    }
-  }
+    void performTask(@NotNull String task);
+	</span>
+    <span class="fragment" data-fragment-index="2">final class DefaultImpls {</span>
+      <span class="fragment" data-fragment-index="3">public static void performTask(</span>
+          <span class="fragment" data-fragment-index="4">@NotNull DelegatingEmployee self,</span>
+          <span class="fragment" data-fragment-index="3">@NotNull String task) {</span>
+        <span class="fragment" data-fragment-index="5">self.getDelegate().performTask(task);</span>
+      <span class="fragment" data-fragment-index="3">}</span>
+    <span class="fragment" data-fragment-index="2">}</span>
+  <span class="fragment" data-fragment-index="0">}</span>
 					</code></pre>
 				</section>
 				<section>
 					<h2>Вторая попытка</h2>
-					<pre style="font-size: 18px"><code class="hljs kotlin">
-  class Manager(
-      name: String
-  ) : AbstractEmployee(name), DelegatingEmployee {
-    override var delegate: Employee = Worker(Names.next())
-  
+					<pre style="font-size: 18px"><code class="hljs kotlin highlight-code" data-noescape>
+  <span class="unimportant">class Manager(name: String) : AbstractEmployee(name)</span><span class="fragment" data-fragment-index="0">, DelegatingEmployee</span> <span class="unimportant">{</span>
+    <span class="fragment" data-fragment-index="1">override var delegate: Employee = Worker(Names.next())</span>
+  	<span class="unimportant">
     override fun performTask(task: String) {
-      say("Hey, $task.")
-      super.performTask(task)
-      say("It's just a piece of cake to $task.")
+      say("Hey, $task.")</span>
+      <span class="fragment" data-fragment-index="2">super.performTask(task)</span>
+      <span class="unimportant">say("It's just a piece of cake to $task.")
       fireAndHire()
     }
   
     private fun fireAndHire() {
-      say("Seems I need to fire this guy and hire someone else.")
-      delegate = Worker(Names.next())
-    }
-  }					</code></pre>
+      say("Seems I need to fire this guy and hire someone else.")</span>
+      <span class="fragment" data-fragment-index="3">delegate = Worker(Names.next())</span>
+    <span class="unimportant">}
+  }</span>
+					</code></pre>
 				</section>
 				<section class="centered">
 					<div style="font-size: 30px">
@@ -529,50 +529,50 @@
 				<section>
 					<h2>Появляется эксперт</h2>
 					<br />
-					<pre><code class="hljs kotlin">
-  interface Expert {
-    fun answer(question: String)
-  }
+					<pre><code class="hljs kotlin highlight-code" data-noescape>
+  <span class="fragment" data-fragment-index="0">interface Expert {</span>
+    <span class="fragment" data-fragment-index="1">fun answer(question: String)</span>
+  <span class="fragment" data-fragment-index="0">}</span>
 					</code></pre>
 				</section>
 				<section>
 					<h2>Работник спрашивает эксперта</h2>
-					<pre style="font-size: 18px"><code class="hljs kotlin">
-  class Worker(
-      name: String,
-      private val expert: Expert
-  ) : AbstractEmployee(name) {
-    override fun performTask(task: String) {
-      ask("What is the theme?")
-      ask("When is the deadline?")
-      say("I had to $task and I've just done it.")
-    }
-  
-    private fun ask(question: String) {
-      say(question)
-      expert.answer(question)
-    }
-  }
+					<pre style="font-size: 18px"><code class="hljs kotlin highlight-code" data-noescape>
+  <span class="unimportant">class Worker(
+      name: String,</span>
+      <span class="fragment" data-fragment-index="0">private val expert: Expert</span>
+  <span class="unimportant">) : AbstractEmployee(name) {
+    override fun performTask(task: String) {</span>
+      <span class="fragment" data-fragment-index="1">ask("What is the theme?")
+      ask("When is the deadline?")</span>
+      <span class="unimportant">say("I had to $task and I've just done it.")
+    }</span>
+  	<span class="fragment" data-fragment-index="2">
+    private fun ask(question: String) {</span>
+      <span class="unimportant">say(question)</span>
+      <span class="fragment" data-fragment-index="2">expert.answer(question)
+    }</span>
+  <span class="unimportant">}</span>
 					</code></pre>
 				</section>
 				<section>
 					<h2>Очевидное решение</h2>
-					<pre style="font-size: 18px"><code class="hljs kotlin" data-noescape>
-  class Manager(
+					<pre style="font-size: 18px"><code class="hljs kotlin highlight-code" data-noescape>
+  <span class="unimportant">class Manager(
       name: String
-  ) : AbstractEmployee(name),
-      Expert,
-      Employee by Worker("Dilbert", <span class="error">this</span>) {
-    override fun performTask(task: String) {
+  ) : AbstractEmployee(name),</span>
+      <span class="fragment" data-fragment-index="2">Employee by Worker("Dilbert", <span class="error">this</span>),</span>
+      <span class="fragment" data-fragment-index="0">Expert</span> <span class="unimportant">{
+    fun manageTask(task: String) {
       say("Hey, $task.")
-      super.performTask(task)
+      performTask(task)
       say("It's just a piece of cake to $task.")
-    }
-  
+    }</span>
+  	<span class="fragment" data-fragment-index="1">
     override fun answer(question: String) {
       say(MotivationalQuotes.random())
-    }
-  }
+    }</span>
+  <span class="unimportant">}</span>
 					</code></pre>
 				</section>
 				<section>
@@ -588,22 +588,22 @@
 				</section>
 				<section>
 					<h2>Исправляем</h2>
-					<pre style="font-size: 18px"><code class="hljs kotlin">
-  class Manager(
+					<pre style="font-size: 18px"><code class="hljs kotlin highlight-code" data-noescape>
+  <span class="unimportant">class Manager(
       name: String
-  ) : AbstractEmployee(name), DelegatingEmployee, Expert {
-    override val delegate: Employee = Worker("Dilbert", this)
-  
-    override fun performTask(task: String) {
+  ) : AbstractEmployee(name),</span> <span class="fragment" data-fragment-index="0">DelegatingEmployee</span><span class="unimportant">, Expert {</span>
+    <span class="fragment" data-fragment-index="1">override val delegate: Employee = Worker("Dilbert", this)</span>
+  	<span class="unimportant">
+    fun manageTask(task: String) {
       say("Hey, $task.")
-      super.performTask(task)
+      performTask(task)
       say("It's just a piece of cake to $task.")
     }
   
     override fun answer(question: String) {
       say(MotivationalQuotes.random())
     }
-  }
+  }</span>
 					</code></pre>
 				</section>
 				<section class="centered">
@@ -649,14 +649,14 @@
   
     public Manager(final String name) { super(name); }
 
-    @Override public Employee getDelegate() { return delegate; } 
-  
-    @Override public void performTask(final String task) {
+    public void manageTask(final String task) {
       say("Hey, %s.", task);
-      super.performTask(task);
+      performTask(task);
       say("It's just a piece of cake to %s.", task);
     }
-  
+
+    @Override public Employee getDelegate() { return delegate; } 
+
     @Override public void answer(final String question) {
       say(MotivationalQuotes.INSTANCE.random());
     }
@@ -673,6 +673,7 @@
 						<li>Модификаторы доступа</li>
 					</ul>
 				</section>
+				<section></section>
 				<section class="centered">
 					<h1>Спасибо за внимание!</h1>
 				</section>
